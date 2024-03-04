@@ -1,0 +1,32 @@
+name: Sync Content
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pandas
+        uses: actions/checkout@v2
+        with:
+          repository: 'pandas-dev/pandas'
+          path: 'pandas'
+          ref: 'main'
+
+      - name: Checkout pandas-translations
+        uses: actions/checkout@v2
+        with:
+          path: 'pandas-translations'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync the website content
+        run: |
+          rsync -av --delete pandas/pandas/web/pandas/ pandas-translations/content/en/
+          cd pandas-translations
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "Update website content" -a || echo "No changes to commit"
+          git push
