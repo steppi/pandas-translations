@@ -31,5 +31,25 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git add .
+          # Only proceed to commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            echo "CONTENT_CHANGED=false" >> $GITHUB_ENV
+          else
+            git commit -m "Update website content"
+            echo "CONTENT_CHANGED=true" >> $GITHUB_ENV
+          fi
           git commit -m "Update website content" -a || echo "No changes to commit"
-          git -c http.extraHeader="AUTHORIZATION: basic $(echo -n x-access-token:${{ secrets.GITHUB_TOKEN }} | base64)" push
+
+      - name: Create Pull Request
+        if: env.CONTENT_CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update website content"
+          title: "Automated Sync: Update website content"
+          body: "This is an automated PR to update website content"
+          branch: "sync/${{ github.run_number }}"
+          base: "main"
+          delete-branch: true
+          draft: false
