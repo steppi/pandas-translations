@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: 'pandas-translations'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: 'main'
 
       - name: Sync the website content
         run: |
@@ -32,4 +32,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git commit -m "Update website content" -a || echo "No changes to commit"
-          git push
+          git -c http.extraHeader="AUTHORIZATION: basic $(echo -n x-access-token:${{ secrets.GITHUB_TOKEN }} | base64)" push
