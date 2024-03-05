@@ -53,3 +53,4 @@ jobs:
           base: "main"
           delete-branch: true
           draft: false
+        working_directory: ./pandas_translations
