@@ -7,6 +7,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Run only on main branch in upstream repo.
+    if github.repository == 'scientific-python-translations/pandas-translations' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout pandas
         uses: actions/checkout@v2
