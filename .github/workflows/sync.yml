@@ -42,9 +42,8 @@ jobs:
           else
             git commit -m "Update website content"
             echo "CONTENT_CHANGED=true" >> $GITHUB_ENV
+            git push -u origin ${{ env.BRANCH_NAME }}
           fi
-          git commit -m "Update website content" -a || echo "No changes to commit"
-          git push -u origin ${{ env.BRANCH_NAME }}
 
       - name: Create Pull Request
         if: env.CONTENT_CHANGED == 'true'
